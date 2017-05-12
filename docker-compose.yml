@@ -1,0 +1,28 @@
+db:
+  image: mysql:5.5
+  volumes:
+    - ./mysql:/var/lib/mysql
+  restart: always
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+
+phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  ports:
+    - "8080:80"
+  restart: always
+  links:
+    - db
+
+web:
+  image: kunzisoft/php-mysql:7.0-apache
+  ports:
+    - "80:80"
+  restart: always
+  volumes:
+    - ./www:/var/www/html/public/
+    - ./config/php:/usr/local/etc/php/
+    - ./config/apache2/apache2.conf:/etc/apache2/apache2.conf
+    - ./config/apache2/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+  links:
+    - db
